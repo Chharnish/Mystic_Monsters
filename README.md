@@ -19,7 +19,7 @@ Use the town's shop and inn to your advantage if you have the gold for it of cou
 There are final bosses in the game but only one has been included.
 
 
-\n\nThere is a debug menu included in the code to be able to test out certain functions of the program.
+There is a debug menu included in the code to be able to test out certain functions of the program.
 
 if you wish to access this menu, type in 63 and press <ENTER> 
 
