@@ -4,6 +4,8 @@ This code is still in a work in progress stage.
 
 I plan to finish the entire code as this project has really got my gears turning on what I can do in a python text environment.
 
+Do make sure that you extract all files as show in the directory. 
+
 How to play:
 
 Menus will be shown in the window.
