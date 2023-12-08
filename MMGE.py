@@ -4,12 +4,14 @@ MMGE has been produced by Jeremy Escobar
 import sys,os,time,json,random
 
 def clear():
+    #quick screen clear function
     os.system("cls")
 
 class char(object):
     def __init__(self,name="default",maxHP=20,HP=20,armor=1,armName="stained cloth",weapon="fists",maxMP=5,MP=5,magic=[],
                  gold=0,XP=0,LVL=1,maxDamage=5,accuracy=85,backpack=[]):
         #char(name,maxHP,HP,armor,armName,weapon,maxMP,MP,magic,gold,XP,LVL,maxDamage,accuracy,backpack)
+        #main character class
         self.name = name
         self.maxHP = maxHP
         self.HP = HP
@@ -43,6 +45,7 @@ class char(object):
         return self.__HP
     @HP.setter
     def HP(self,value):
+        #defining limits to HP
         if value < 0:
             value = 0
         else:
@@ -81,6 +84,7 @@ class char(object):
         return self.__MP
     @MP.setter
     def MP(self,value):
+        #defining limits to MP
         self.__MP = value
         if self.__MP > self.__maxMP:
             self.__MP = self.__maxMP
@@ -131,6 +135,7 @@ class char(object):
 
 class monsterChar(object):
     def __init__(self,name="Gooner",maxHP=10,HP=10,LVL=1,maxDamage=5,accuracy=70,armor=0,fleeDisabled="N"):
+        #Standard monster 
         super().__init__()
         self.name = name
         self.maxHP = maxHP
@@ -189,13 +194,7 @@ class monsterChar(object):
     @fleeDisabled.setter
     def fleeDisabled(self,value):
         self.__fleeDisabled = value
-
-def getDict(file):
-    inFile = open(file,"r")
-    saveData = json.load(inFile)
-    inFile.close()
-    return saveData
-
+        
 def slowPrint(text,speed):
     #text variable is what you want to be printed out and speed variable is how fast in seconds each letter will appear
     if speed != 0:
@@ -206,6 +205,7 @@ def slowPrint(text,speed):
         print()
    
 def getScript():
+    #getting the script for the intro to the game
     try:
         inFile = open("assets\prompts.txt", "r")
         prompt = ""
@@ -218,6 +218,7 @@ def getScript():
         return "You broke it >:("
     
 def new():
+    #gives the char class a name that isn't "" default or DEFAULT
     keepGoing = True
     while keepGoing:
         print("Name your hero")
@@ -230,6 +231,7 @@ def new():
             return name
 
 def menu(CONTS):
+    #this takes the content of a list or dictionary and displays it with a number. an input attempts to become an int but will return blank string if the input cannot become an integer
     print()
     for id,CONT in enumerate(CONTS):
         print(f"    {id}) {CONT}")
@@ -242,6 +244,7 @@ def menu(CONTS):
     return sel
 
 def progressBar(self,type):
+    #displays a progress bar depending on the bar type
     maxDashes = 20
     if type == "HP":
         maxType = self.maxHP
@@ -260,7 +263,8 @@ def progressBar(self,type):
     print(f"    {type} Remaining: |{typeDisplay} {remainingDisplay}|  {barType}/{maxType}")
 
 def venture(hero):
-    enChance = random.randint(0,100)
+    #determines whether hero will encounter a monster
+    enChance = random.randrange(0,100)
     print("Wandering around")
     slowPrint("...",1)
     if enChance <= 80:
@@ -270,6 +274,7 @@ def venture(hero):
         print(f"\n{hero.name} felt bored and returned to town.")
 
 def getMonster(self):
+    #gets a dictionary of monsters and randomly select one from the dictionary
     inFile = open("assets\monsters\monsters.json","r")
     MONSTERS = json.load(inFile)
     inFile.close()
@@ -280,7 +285,7 @@ def getMonster(self):
     for monster in MONSTERS:
         if MONSTERS[monster][1] in range(lowLvl,highLvl):
             potMonsters.append(monster)
-    chance = random.randint(0,len(potMonsters))
+    chance = random.randrange(0,len(potMonsters))
     for num,monName in enumerate(potMonsters):
         for monster in MONSTERS:
             if chance == num:
@@ -296,6 +301,7 @@ def getMonster(self):
     return crit
     
 def battle(hero,op):
+    #Main battle menu that show health and options available
     keepGoing = True
     if op.fleeDisabled == "Y":
         fleeDisabled = True
@@ -335,7 +341,7 @@ def battle(hero,op):
         elif sel == 0:
             print("attempting to flee")
             slowPrint("...",.6)
-            fleeChance = random.randint(0,100)
+            fleeChance = random.randrange(0,100)
             if fleeDisabled != True:
                 if fleeChance <= 50:
                     print("You've fled this battle")
@@ -348,6 +354,7 @@ def battle(hero,op):
                 continue
         else:
             clear()
+        #checks hp values to determine when to end the battle
         if op.HP != 0:
             if opsel < 85:
                 attack(op,hero,0)
@@ -370,8 +377,9 @@ def battle(hero,op):
     clear()
         
 def attack(self,char,ti):
-    hitSuccess = random.randint(0,100)
-    damageAmount = random.randint(1,self.maxDamage) - char.armor
+    #attack sequence for opponent
+    hitSuccess = random.randrange(0,100)
+    damageAmount = random.randrange(1,self.maxDamage) - char.armor
     if damageAmount < 0:
         damageAmount = 0
     
@@ -390,9 +398,11 @@ def attack(self,char,ti):
         print(f"{self.name} tripped over their confidence and landed face first into the dirt")
 
 def defend(self):
+    #defend sequence.. planning to add more varaibles that determine defence
     self.armor += 5
 
 def magic(self,op):
+    #magic menu that uses magic that is in the hero's magic class variable. will not work without a spellbook present
     keepGoing = True
     if "Spellbook" not in self.magic:
         keepGoing = False
@@ -449,6 +459,7 @@ def magic(self,op):
             num += 1
 
 def item(self):
+    #Menu to use items in the battle sequence
     print("\nSelect an Item to use or press ENTER to return back to previous screen")
     sel = menu(self.backpack)
     if type(sel) == int:
@@ -462,41 +473,46 @@ def item(self):
         return skip
     
 def gainXP(hero,op):
-    xpGained = random.randint(1,(op.LVL*2))
+    #based on opponent level, determines how much xp is gained
+    xpGained = random.randrange(1,(op.LVL*2))
     print(f"You Gained {xpGained} XP!")
     hero.XP += xpGained
 
 def gainGold(hero,op):
+    #based on opponent level, determines how much gold is gained
     minGold = 2*op.LVL
     maxGold = 5*op.LVL
-    goldGained = random.randint(minGold,maxGold)
+    goldGained = random.randrange(minGold,maxGold)
     hero.gold += goldGained
     print(f"you Gained {goldGained} Gold!")
 
 def check(hero):
+    #checks the current amount of XP of the hero and increases LVL, HP, and MP
     lvlCheck = 2*(2**hero.LVL)
     if lvlCheck <= hero.XP:
         hero.LVL += 1
-        hero.maxHP += 5
-        hero.maxMP += 5
+        hero.maxHP += 3
+        hero.maxMP += 3
         hero.HP = hero.maxHP
         hero.MP = hero.maxMP
         print("Level up!")
         print("HP and MP has been increased!")
 
 def found(self):
+    #death sequence if hero hp falls below 1
     print("The town's inn keeper found you on the ground while they were doing their normal stroll"), time.sleep(3), clear()
     print("Inn Keeper: "), slowPrint("Oh you're finally awake..", .05)
-    input(), clear()
+    input("\n press <ENTER> to continue"), clear()
     print("Inn Keeper: "), slowPrint("I dragged you here and took care of you for a few days while you recovered.", .05)
-    input(), clear()
+    input("\n press <ENTER> to continue"), clear()
     print("Inn Keeper: "), slowPrint("You can be on your way & I'll just take 25 gold in exchange for rescuing your life.",.05)
-    input(), clear()
+    input("\n press <ENTER> to continue"), clear()
     print(f"{self.name} paid the Inn Keeper 25 gold")
     self.gold -= 25
     self.HP += 10
 
 def load():
+    #loads a save file that contains dictionary values in json format
     saves = os.listdir("assets\saves")
     print("select a save to load")
     for num,save in enumerate(saves):
@@ -512,7 +528,7 @@ def load():
                     stat = items
                 for items in loadSave.keys():
                     heroName = items
-                hero = char(heroName,stat[0],stat[1],stat[2],stat[3],stat[4],stat[5],stat[6],stat[7],stat[8],stat[9],stat[10],stat[11])
+                hero = char(heroName,stat[0],stat[1],stat[2],stat[3],stat[4],stat[5],stat[6],stat[7],stat[8],stat[9],stat[10],stat[11],stat[12],stat[13])
                 clear()
                 print("Save loaded successfully")
                 return hero
@@ -523,11 +539,12 @@ def load():
         return hero
     
 def save(self):
+    #saves a new file containing a dictionary in json format
     NEWSAVE = {}
     saves = os.listdir("assets\saves")
     saves.append("new")
-    NEWSAVE[self.name] = (self.maxHP,self.HP,self.armor,self.armName,self.weapon,self.maxMP,self.MP,self.gold,
-                          self.XP,self.LVL,self.maxDamage,self.accuracy)
+    NEWSAVE[self.name] = (self.maxHP,self.HP,self.armor,self.armName,self.weapon,self.maxMP,self.MP,self.magic,self.gold,
+                          self.XP,self.LVL,self.maxDamage,self.accuracy,self.backpack)
     print("select a file to save to")
     sel = menu(saves)
     for num,item in enumerate(saves):
@@ -537,6 +554,7 @@ def save(self):
             outFile.close()
 
 def checkInventory(char):
+    #displpays stats of the hero and what is in the backpack variable
     keepGoing = True
     lvlCheck = 2*(2**char.LVL)
     while keepGoing:
@@ -563,6 +581,9 @@ def checkInventory(char):
             keepGoing = False
             
 def useItem(char,use):
+    #takes in the item selection and checks it against a dictionary of items pulled from a file containing item dictionaries.
+    #removes the item once used
+    #if item does not match with any in the dictionary of items, item will disappear without any stat changes
     inFile = open("assets\\items\items.json", "r")
     ITEMS = json.load(inFile)
     inFile.close()
@@ -578,8 +599,6 @@ def useItem(char,use):
                 print(f"{char.name} consumed {item}")
                 HP = ITEMS[item][1]
                 MP = ITEMS[item][2]
-                tempDef = ITEMS[item][3]
-                tempAttack = ITEMS[item][4]
                 if HP != 0:
                     char.HP += HP
                     print(f"{char.name} regained {HP} HP!")
@@ -626,7 +645,7 @@ def useItem(char,use):
         char.backpack.remove(use)
 
 def shop(self,town):
-    # item = { Name : [isEquipable, Value 1, Value 2, Cost, lvl required]}
+    #Displays items in certain item sets based on which town is currently present
     keepGoing = True
     print("Shop Keeper: Welcome to my shop!\n")
     while keepGoing:
@@ -644,6 +663,7 @@ def shop(self,town):
             print("Shop Keeper: Have a good day!")
 
 def getItems(self,type,town):
+    #gets a dictionary of items based on the town that the shop is present in
     if town == "Town of Beginnings":
         fileType = "beginnings"
     inFile = open(f"assets\items\{fileType}_items.json","r")
@@ -664,6 +684,7 @@ def getItems(self,type,town):
     return newITEMS
 
 def shopMenu(self,town,type):
+    #prints out items and matches it with the selection
     ITEMS = getItems(self,type,town)
     for num,item in enumerate(ITEMS):
         print(f"    {num}) {item} - {ITEMS[item][3]}G")
@@ -682,6 +703,7 @@ def shopMenu(self,town,type):
                 print(f"Shop Keeper: I'm sorry {self.name}. I don't do tabs. Come back when you're a little mmmm wealthier.")
 
 def visitInn(self):
+    #displays available services for the inn
     keepGoing = True
     while keepGoing:
         print("Inn Keeper: Welcome to the Inn! Take a look at our menu options and please let me know what you'll like")
@@ -703,6 +725,7 @@ def visitInn(self):
             print("Inn Keeper: I'm sorry, I didn't understand your request.")
 
 def innSleep(self,message,rate,gold):
+    #takes gold from hero gold variable and replenishes stats based on the rate of the room then prints the message that has been provided
         if self.gold > gold:
             slowPrint("...",1.5)
             print(message)
@@ -718,6 +741,7 @@ def innSleep(self,message,rate,gold):
             print(f"needed: {gold}  Current Gold: {self.gold} ")
 
 def play(hero):
+    #main game menu 
     keepGoing = True
     if hero.name == "default":
         hero.name = new()
@@ -747,5 +771,5 @@ def play(hero):
             #inn
             visitInn(hero)
         if sel == 6:
-            #change town
+            #change town which is not implimented
             pass

@@ -42,19 +42,23 @@ develop the shop
 import MMGE,os,time,json
 
 def clear():
+    #quick screen clear function
     os.system("cls")
 
 def intro():
+    #prints the intro of the game
     prompt = MMGE.getScript()
     MMGE.slowPrint(prompt,0.05)
     time.sleep(2)
     clear()
-    MMGE.slowPrint("Welcome to Mythical Monsters!\n",0.1)
+    MMGE.slowPrint("Welcome to Mystic Monsters!",0.1)
     time.sleep(1)
     input("Press ENTER to continue to main menu...")
     clear()
 
 def create():
+    #Creates items and adds them into their specific groupset and the main item dictionary
+    #will crash if the wrong input not put in as this is a debug/developer feature
     keepGoing = True
     filetype = input("item groupset: ")
     try:
@@ -108,6 +112,8 @@ def create():
     outFile.close()
     
 def editStat(self):
+    #edits stats of the current hero directly
+    #will crash if the wrong input not put in as this is a debug/developer feature
     keepGoing = True
     while keepGoing:
         print("char(name,maxHP,HP,armor,armName,weapon,maxMP,MP,magic,gold,XP,LVL,maxDamage,accuracy,backpack\n")
@@ -166,6 +172,8 @@ def editStat(self):
             self.backpack = newValue.split(",")
         
 def addMonster():
+    #adds monsters to the main dictionary. based on LVL will determine where they show up
+    #will crash if the wrong input not put in as this is a debug/developer feature
     keepGoing = True
     try:
         inFile = open("assets\monsters\monsters.json","r")
@@ -194,6 +202,8 @@ def addMonster():
 
     
 def debug(self):
+    #the debug menu.. super secret developer stuff & jargon
+    #to get here, type '63' in the main menu instead of the options shown
     keepGoing = True
     while keepGoing:
         print("Welcome to the debug menu")
@@ -211,6 +221,7 @@ def debug(self):
         clear()
 
 def main():
+    #DA MAIN MENU!!
     intro()
     keepGoing = True
     hero = MMGE.char()
